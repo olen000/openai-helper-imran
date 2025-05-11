@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Sensor - FYP HILMAN</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      text-align: center;
+    }
+    .card {
+      background-color: white;
+      padding: 20px;
+      margin: 20px auto;
+      width: 500px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    iframe {
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>FYP HILMAN - Live Sensor Dashboard</h1>
+
+  <div class="card">
+    <h2>Graf Temperature (Field 1)</h2>
+    <iframe width="450" height="260"
+      src="https://thingspeak.com/channels/2850470/charts/1?bgcolor=%23ffffff&color=%2300aaff&dynamic=true">
+    </iframe>
+  </div>
+
+  <div class="card">
+    <h2>Graf Humidity (Field 2)</h2>
+    <iframe width="450" height="260"
+      src="https://thingspeak.com/channels/2850470/charts/2?bgcolor=%23ffffff&color=%2300aaff&dynamic=true">
+    </iframe>
+  </div>
+
+  <div class="card">
+    <h2>Graf Gas Sensor (Field 3)</h2>
+    <iframe width="450" height="260"
+      src="https://thingspeak.com/channels/2850470/charts/3?bgcolor=%23ffffff&color=%2300aaff&dynamic=true">
+    </iframe>
+  </div>
+
+  <div class="card">
+    <h2>Graf Air Quality (Field 4)</h2>
+    <iframe width="450" height="260"
+      src="https://thingspeak.com/channels/2850470/charts/4?bgcolor=%23ffffff&color=%2300aaff&dynamic=true">
+    </iframe>
+  </div>
+
+  <div class="card">
+    <h2>Bacaan Sensor Terkini</h2>
+    <p><strong>Temperature (Field 1):</strong> <span id="field1">Memuat...</span> °C</p>
+    <p><strong>Humidity (Field 2):</strong> <span id="field2">Memuat...</span> %</p>
+    <p><strong>Gas Sensor (Field 3):</strong> <span id="field3">Memuat...</span> ppm</p>
+    <p><strong>Air Quality (Field 4):</strong> <span id="field4">Memuat...</span> µg/m³</p>
+  </div>
+
+  <script>
+    function getData() {
+      fetch('https://api.thingspeak.com/channels/2850470/feeds/last.json')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("field1").innerHTML = (data.field1 ? parseFloat(data.field1).toFixed(2) : "Tiada data");
+          document.getElementById("field2").innerHTML = (data.field2 ? parseFloat(data.field2).toFixed(2) : "Tiada data");
+          document.getElementById("field3").innerHTML = data.field3 || "Tiada data";
+          document.getElementById("field4").innerHTML = data.field4 || "Tiada data";
+        })
+        .catch(error => {
+          ["field1", "field2", "field3", "field4"].forEach(id => {
+            document.getElementById(id).innerHTML = "Gagal dapat data";
+          });
+        });
+    }
+
+    getData(); // panggil sekali
+    setInterval(getData, 15000); // ulang setiap 15 saat
+  </script>
+</body>
+</html>
